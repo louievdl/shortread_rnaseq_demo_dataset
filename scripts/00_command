@@ -1,0 +1,14 @@
+# goal is to align to a recent genome with transcript information to identify subset of read pairs that map to transcripts
+
+# 20250221 download genome index - get 'tran' version with transcript information - will use this
+mkdir -p ../data/genome
+wget -O ../data/genome/grcm38_tran.tar.gz ../d https://cloud.biohpc.swmed.edu/index.php/s/grcm38_tran/download/grcm38_tran.tar.gz
+(cd ../data/genome && tar xvpzf grcm38_tran.tar.gz)
+(cd ../data/genome && mv grcm38_tran/* . && rm -r grcm38_tran/ grcm38_tran.tar.gz) # clean up
+
+# method 1, using --al-conc-gz to report concordant alignments directly from hisat2, makes total gzipped files of 3.3G before trimming
+sbatch --partition=xxxx --array=1-35 --ntasks=1 --cpus-per-task=4 --mem-per-cpu=4g --time=10:00:00 filter_transcript_reads_hisat2.sh
+
+# method 2, using intermediate samtools filtering steps, makes total gzipped files of 2.8G before trimming, 1.3G after.
+sbatch --partition=xxxx --array=1-35 --ntasks=1 --cpus-per-task=4 --mem-per-cpu=4g --time=10:00:00 filter_transcript_reads_hisat2_samtools.sh
+
